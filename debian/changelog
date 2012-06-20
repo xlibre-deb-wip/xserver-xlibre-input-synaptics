@@ -1,3 +1,84 @@
+xserver-xorg-input-synaptics (1.6.2-1ubuntu1~precise1) UNRELEASED; urgency=low
+
+  * Merged from Debian unstable
+  * Removed patches that were cherry picked commits and now in 1.6.2:
+    - 201-Avoid-out-of-bounds-access-by-running-num_active_tou.patch
+    - 202-Ignore-pre-existing-touches.patch
+    - 203-Fix-coasting-for-negative-ScrollDelta.patch
+    - 204-Reset-open-slots-array-on-device-disable.patch
+    - 205-Reset-hw-x-y-to-INT_MIN-and-skip-HandleState-until-w.patch
+    - 206-Don-t-allow-for-scroll-distances-of-0-49965.patch
+  * Remaining patches:
+    - 101_resolution_detect_option.patch
+    - 103_enable_cornertapping.patch
+    - 104_always_enable_tapping.patch
+    - 106_always_enable_vert_edge_scroll.patch
+    - 115_evdev_only.patch
+    - 118_quell_error_msg.patch
+    - 124_syndaemon_events.patch
+    - 125_option_rec_revert.patch
+    - 126_ubuntu_xi22.patch
+    - 128_disable_three_click_action.patch
+    - 129_disable_three_touch_tap.patch
+  * Reinstate patch for (LP: #972727) due to feature freeze in precise
+
+ -- Maarten Lankhorst <maarten.lankhorst@canonical.com>  Thu, 14 Jun 2012 09:35:21 +0200
+
+xserver-xorg-input-synaptics (1.6.2-1) unstable; urgency=low
+
+  * New upstream release, from the 1.6 branch.
+
+ -- Cyril Brulebois <kibi@debian.org>  Wed, 13 Jun 2012 22:22:42 +0200
+
+xserver-xorg-input-synaptics (1.6.1-1ubuntu2) quantal-proposed; urgency=low
+
+  * Enable right button clickpad area by default (LP: #972727)
+    - Upstream has this enabled. We had it disabled for Precise due to the
+      feature landing well after feature freeze. This change puts us back in
+      sync with upstream.
+
+ -- Chase Douglas <chase.douglas@ubuntu.com>  Thu, 07 Jun 2012 10:07:18 -0700
+
+xserver-xorg-input-synaptics (1.6.1-1ubuntu1) quantal; urgency=low
+
+  * Merged from Debian unstable
+  * Refreshed patches for indentation changes
+    - 101_resolution_detect_option.patch
+    - 118_quell_error_msg.patch
+    - 124_syndaemon_events.patch
+    - 125_option_rec_revert.patch
+  * Add temporary patches, for upstream git commits on synaptics-1.6-branch
+  * Fix memory corruption by driver (LP: #941953) FDo #49439
+   - 201-Avoid-out-of-bounds-access-by-running-num_active_tou.patch
+   - 202-Ignore-pre-existing-touches.patch
+  * Fix FDo #49966
+   - 203-Fix-coasting-for-negative-ScrollDelta.patch
+  * Fix jumpy cursor after suspend/resume
+   - 204-Reset-open-slots-array-on-device-disable.patch
+  * Fix another resume bug
+   - 205-Reset-hw-x-y-to-INT_MIN-and-skip-HandleState-until-w.patch
+  * Fix division by 0 or infinite loop with zero scroll distance FDo #49965
+   - 206-Don-t-allow-for-scroll-distances-of-0-49965.patch
+
+ -- Maarten Lankhorst <maarten.lankhorst@canonical.com>  Mon, 21 May 2012 14:14:49 +0200
+
+xserver-xorg-input-synaptics (1.6.1-1) unstable; urgency=low
+
+  [ Julien Cristau ]
+  * The mtdev build-dep is linux-only (closes: #672572).  Thanks, Pino
+    Toscano!
+
+  [ Cyril Brulebois ]
+  * New upstream release, from the 1.6 branch.
+
+ -- Cyril Brulebois <kibi@debian.org>  Sun, 20 May 2012 16:50:18 +0200
+
+xserver-xorg-input-synaptics (1.6.0-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Cyril Brulebois <kibi@debian.org>  Mon, 07 May 2012 01:13:08 +0200
+
 xserver-xorg-input-synaptics (1.6.0-0ubuntu1~precise1) precise-proposed; urgency=low
 
   * Update to upstream version 1.6.0
@@ -13,6 +94,25 @@ xserver-xorg-input-synaptics (1.6.0-0ubuntu1~precise1) precise-proposed; urgency
   * Refreshed 130_dont_enable_rightbutton_area.patch
 
  -- Chase Douglas <chase.douglas@ubuntu.com>  Mon, 07 May 2012 12:31:21 -0700
+
+xserver-xorg-input-synaptics (1.5.99.904-2) unstable; urgency=low
+
+  * Add a build-dep on libmtdev-dev now that X server 1.12 is in sid,
+    for XI 2.2 support.
+
+ -- Cyril Brulebois <kibi@debian.org>  Tue, 01 May 2012 15:02:43 +0200
+
+xserver-xorg-input-synaptics (1.5.99.904-1) unstable; urgency=low
+
+  * New upstream release candidate (1.6 RC4).
+
+ -- Cyril Brulebois <kibi@debian.org>  Fri, 27 Apr 2012 19:52:44 +0000
+
+xserver-xorg-input-synaptics (1.5.99.902-1) unstable; urgency=low
+
+  * New upstream release candidate (1.6 RC2).
+
+ -- Cyril Brulebois <kibi@debian.org>  Mon, 02 Apr 2012 01:12:26 +0000
 
 xserver-xorg-input-synaptics (1.5.99.902-0ubuntu5.1) precise-proposed; urgency=low
 
@@ -73,6 +173,14 @@ xserver-xorg-input-synaptics (1.5.99.902-0ubuntu1) precise; urgency=low
     - Add temporary patch 200_fix_four_tap.patch
 
  -- Chase Douglas <chase.douglas@ubuntu.com>  Thu, 29 Mar 2012 15:31:40 -0700
+
+xserver-xorg-input-synaptics (1.5.99.901-1) unstable; urgency=low
+
+  * New upstream release candidate (1.6 RC1):
+    - Add support for ClickPads.
+  * Multitouch isn't enabled yet (it would require a newer server anyway).
+
+ -- Cyril Brulebois <kibi@debian.org>  Tue, 20 Mar 2012 21:40:10 +0000
 
 xserver-xorg-input-synaptics (1.5.99.901-0ubuntu2) precise; urgency=low
 
