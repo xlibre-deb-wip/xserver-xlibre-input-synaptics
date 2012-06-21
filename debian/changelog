@@ -1,5 +1,10 @@
 xserver-xorg-input-synaptics (1.6.2-1ubuntu1~precise1) UNRELEASED; urgency=low
 
+  * Fixes memory corruption by driver (LP: #941953) FDo #49439
+  * Fixes 'Coasting Direction is incorrect for negative VertScrollDelta/HorizScrollDelta'
+  * Fixes jumpy cursor after suspend/resume
+  * Fixes another resume bug
+  * Fixes division by 0 or infinite loop with zero scroll distance FDo #49965
   * Merged from Debian unstable
   * Removed patches that were cherry picked commits and now in 1.6.2:
     - 201-Avoid-out-of-bounds-access-by-running-num_active_tou.patch
