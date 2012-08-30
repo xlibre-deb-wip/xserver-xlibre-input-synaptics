@@ -1,3 +1,9 @@
+xserver-xorg-input-synaptics (1.6.2-1ubuntu1~precise2) precise-proposed; urgency=low
+
+  * Added 130_reset-num_active_touches-on-deviceoff.patch (LP: #956071)
+
+ -- Timo Aaltonen <tjaalton@ubuntu.com>  Thu, 30 Aug 2012 20:32:12 +0300
+
 xserver-xorg-input-synaptics (1.6.2-1ubuntu1~precise1) precise-proposed; urgency=low
 
   * Fixes memory corruption by driver (LP: #941953) FDo #49439

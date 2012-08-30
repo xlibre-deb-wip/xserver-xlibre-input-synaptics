@@ -1,0 +1,37 @@
+When disabling the device, reset num_active_touches to zero. Otherwise,
+num_active_touches stays at the value it was on DeviceOff(). Future touches
+add to that value until the index may go past priv->open_slots[].
+That causes spurious memory corruption on touch ends.
+
+And as of 55fc42e7c9b4948cadd4f98ef7b6a3b12e268e3e we ignore pre-existing
+touches anyway.
+
+Test-case:
+- place num_touches fingers on the touchpad
+- xinput disable <device>
+- lift fingers
+- xinput enable <device>
+- place finger on device, num_active_touches is now (num_touches + 1)
+
+X.Org Bug 52496 <http://bugs.freedesktop.org/show_bug.cgi?id=52496>
+
+Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+--- a/src/synaptics.c
++++ b/src/synaptics.c
+@@ -1154,6 +1154,7 @@
+     priv->lastButtons = 0;
+     priv->prev_z = 0;
+     priv->prevFingers = 0;
++    priv->num_active_touches = 0;
+ #ifdef HAVE_MULTITOUCH
+     memset(priv->open_slots, 0, priv->num_slots * sizeof(int));
+ #endif
+@@ -3119,6 +3120,7 @@
+         if (hw->slot_state[i] == SLOTSTATE_OPEN) {
+             priv->open_slots[priv->num_active_touches] = i;
+             priv->num_active_touches++;
++            BUG_WARN(priv->num_active_touches > priv->num_slots);
+         }
+         else if (hw->slot_state[i] == SLOTSTATE_CLOSE) {
+             Bool found = FALSE;
