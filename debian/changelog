@@ -1,4 +1,4 @@
-xserver-xorg-input-synaptics (1.6.2-1ubuntu1~precise1) UNRELEASED; urgency=low
+xserver-xorg-input-synaptics (1.6.2-1ubuntu1~precise1) precise-proposed; urgency=low
 
   * Fixes memory corruption by driver (LP: #941953) FDo #49439
   * Fixes 'Coasting Direction is incorrect for negative VertScrollDelta/HorizScrollDelta'
