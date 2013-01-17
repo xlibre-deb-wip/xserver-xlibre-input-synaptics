@@ -1,4 +1,4 @@
-xserver-xorg-input-synaptics (1.6.2-1ubuntu6) raring; urgency=low
+xserver-xorg-input-synaptics (1.6.2-1ubuntu5.1) quantal-proposed; urgency=low
 
   * use-sigsafe-logging.patch: Upstream commit from master, use signal
     safe logging with input ABI 18. (LP: #1100586)
