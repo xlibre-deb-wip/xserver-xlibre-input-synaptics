@@ -2,6 +2,7 @@ xserver-xorg-input-synaptics (1.8.2-1) UNRELEASED; urgency=medium
 
   * Let uscan verify tarball signatures.
   * New upstream release.
+  * Bump debhelper compat level to 9.
 
  -- Julien Cristau <jcristau@debian.org>  Sun, 03 May 2015 10:10:30 +0200
 
