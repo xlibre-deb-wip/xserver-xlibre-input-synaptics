@@ -1,3 +1,576 @@
+commit 6f8d4bac14ac8f3fd2714f0a8a9e37c5136a4013
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Fri Mar 27 11:26:55 2015 +1000
+
+    synaptics 1.8.2
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit 15caf2b53407379f8e677d48a022f4b46b97d83a
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Tue Mar 24 15:41:39 2015 +1000
+
+    eventcomm: ignore fake and broken MT devices
+    
+    An MT device without X/Y is not a touchpad. And neither are fake MT devices.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    (cherry picked from commit fc9f490a2c87e6f87b0f483cd6bf5f526dddbb8d)
+
+commit ef8daaf696584f7c1d3e9f192de18b5b9f923bdc
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Mar 23 11:38:15 2015 +1000
+
+    eventcomm: prevent possibly division by zero
+    
+    This came up as a kernel bug, but it's valid to create uinput devices with a
+    min == max range for x/y. Technically valid, but effectively useless, so catch
+    it, complain and hobble on along.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    (cherry picked from commit 30866b97be6939b895327b930154ef758eed7ff8)
+
+commit 90c6d7fc60f3db1bd9db1c7702062fcaef3b3352
+Author: Gabriele Mazzotta <gabriele.mzt@gmail.com>
+Date:   Thu Jan 15 22:04:17 2015 +0100
+
+    Add a delay between the second button down-up event of double taps
+    
+    Some applications ignore the second tap of double taps because of the
+    lack of a delay between the button down and button up events.
+    
+    Prevent this by replacing the transition from TS_2B to TS_START with a
+    transition from TS_2B to TS_SINGLETAP that emits only a button down
+    event. The button up event will be emitted when transitioning from
+    TS_SINGLETAP to TS_START.
+    
+    In addition, decrease the default value of MaxDoubleTapTime from 180 ms
+    to 100 ms in order to make double taps faster.
+    
+    Signed-off-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    (cherry picked from commit 37d34f0356cc556dd8a49ec5d1ed64d49417a9b2)
+
+commit 649b77f0ce617fd1ec073b281636e304e80b56c0
+Author: Gabriele Mazzotta <gabriele.mzt@gmail.com>
+Date:   Thu Jan 15 22:04:16 2015 +0100
+
+    Update machine state diagram
+    
+    The diagram didn't entirely reflect the current state of the code.
+    
+    Signed-off-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    (cherry picked from commit a357647d3fb918b94efbda98138fb0240a949ef2)
+
+commit d50c4bab8ae2836a0f38b29a5d22be2e950e4d08
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Thu Sep 18 07:40:13 2014 +1000
+
+    synaptics 1.8.1
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit bdf6a6b2e2603142e62ae5968c65e6e26f57e51d
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Tue Sep 16 10:44:40 2014 +1000
+
+    Prohibit negative or zero x/y resolutions
+    
+    Default resolution is 1, don't allow setting 0 to avoid divisions by 0 or
+    just general weirdness.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    (cherry picked from commit 049611bd7f04e285909c55807478306cce83385f)
+
+commit 2dd60417450af4ac4f9938e09b06707dd91bddfb
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Fri Sep 5 15:14:47 2014 +1000
+
+    When resetting, reset the open slots to -1
+    
+    open_slots holds the slot index, resetting it to 0 is a bad idea. And make
+    sure that we do reset after DEVICE_INIT. We already do so on DEVICE_CLOSE, but
+    after the first DEVICE_ON the data could still be random.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Keith Packard <keithp@keithp.com>
+    (cherry picked from commit afbbcfa10eb3a2295823720907f35bb59972dd82)
+
+commit 9de611219bebd9b101b98bb79cc0173115ee1833
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Fri Sep 5 14:24:29 2014 +1000
+
+    eventcomm: add missing axis labels to avoid array overrun
+    
+    And warn when we run out of labels.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Keith Packard <keithp@keithp.com>
+    (cherry picked from commit d239f831f17ccf5468f5dc6b2f199a9c1f6e35af)
+
+commit 36d7ee1c9d60752666a94ee4755b3a1d0f339164
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Thu Aug 28 14:13:38 2014 +1000
+
+    eventcomm: ensure we're on the same clock as the server
+    
+    Default on evdev devices is CLOCK_REALTIME. If that clock falls behind the
+    server's CLOCK_MONOTONIC, motion after a clickpad click may be delayed by the
+    difference in the clocks.
+    
+    In detail:
+    When the timer func is triggered, GetTimeInMillis() which is CLOCK_MONOTONIC,
+    is stored as hwState->millis. The eventcomm backend uses struct
+    input_event time (CLOCK_REALTIME).
+    
+    When we read events from the device, if the evdev time is less than the server
+    time, the fix for (#48777) sets the current event time to hwState->millis.
+    Until the evdev time overtakes that stored time, all events have the
+    hwState->millis time.
+    
+    If during that time a clickpad triggers a physical click,
+    clickpad_click_millis is set to hwState->millis + the ignore-motion timeout.
+    Thus, all motion is ignored until the event time overtakes that stored
+    time.
+    
+    The whole issue is further enhanced by us unconditionally setting the timer
+    func if we get any events, which is a separate issue anyway.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    (cherry picked from commit 90d19302306f49722e210227b2fb5161e6f51880)
+
+commit 475e0d3668097f4deb9448c8765dd12b3f15534f
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Fri Aug 29 07:57:41 2014 +1000
+
+    Include xorg-server.h to fix build errors on newest glibc
+    
+    In file included from /usr/include/string.h:634:0,
+                     from /usr/include/xorg/os.h:53,
+                     from /usr/include/xorg/misc.h:115,
+                     from /usr/include/xorg/xf86str.h:37,
+                     from /usr/include/xorg/xf86Xinput.h:54,
+                     from synproto.h:36,
+                     from synproto.c:24:
+    /usr/include/xorg/os.h:579:1: error: expected identifier or '(' before '__extension__'
+     strndup(const char *str, size_t n);
+    
+    See http://lists.freedesktop.org/archives/xorg-devel/2014-July/043070.html
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    (cherry picked from commit 96e60a4ea242d2decf109835981ae186cc36f642)
+
+commit ae77fdfc8e57e612e8aa0e9b45bbea478a82c30b
+Author: Gabriele Mazzotta <gabriele.mzt@gmail.com>
+Date:   Sun Jul 27 12:58:18 2014 +0200
+
+    Prevent two-finger taps from being ignored
+    
+    When two fingers are used, the coordinates of only one of them is taken into
+    account. This can lead to sudden variations of the absolute coordinates when
+    two-fingers taps are performed if the finger considered changes.
+    
+    Take into account coordinates variations to prevent unwanted taps only if
+    the number of fingers doesn't change.
+    
+    Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    (cherry picked from commit 7d0ff39519e4d3760722b914883bee276035061c)
+
+commit cbf0ca508a14201d2c25f96dd6f38cea2cb1954b
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Wed Aug 6 12:04:14 2014 +1000
+
+    conf: increase top software button area to 15%
+    
+    We had reports that the top software button area is hard to hit for those
+    using the trackpoint and clicking the buttons with their thumb.
+    
+    Analysis of event recordings (3 different people) for left, right and middle
+    clicks shows that there is a significant amount of events up to about 10mm
+    (with outliers up to 12mm) from the top of the touchpad. That maps to 15%.
+    
+    Interestingly, the middle button does not seem to need this, presumably the
+    haptic feedback of the little dots sticking out from the surface make hitting
+    the button easier. Its size is increased to 15% anyway, for simplicity and
+    because a sample set of 3 is too small to be definitive about this.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    (cherry picked from commit 730101223432f60397c61f74a5e6789b3ee34ecd)
+
+commit 3a4cc96590ca0e0ff526a5e5406f29a402bddd1a
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Tue May 13 11:20:25 2014 +1000
+
+    synaptics 1.8.0
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit d4d7229c41a20cf6757882a24f45e28d936a27c5
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Wed Apr 30 13:08:53 2014 +1000
+
+    conf: drop the PNPID matching from the fdi file
+    
+    Rely on INPUT_PROP_TOP_BUTTONPAD and default button areas as well.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit a31ecb669f40d8db3ab1867eaedfe364bbd6fafe
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Wed Apr 30 07:45:34 2014 +1000
+
+    synaptics 1.7.99.2
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit efa424b5c9c084c1c1136a68329709c7dc9ddfda
+Author: Clinton Sprain <clintonsprain@gmail.com>
+Date:   Tue Apr 29 19:47:17 2014 -0500
+
+    Fix product ID cutoff for MODEL_APPLETOUCH/MODEL_UNIBODY_MACBOOK
+    
+    Some Macbooks are being tagged as MODEL_UNIBODY_MACBOOKs when they should not
+    be. This causes the default sensitivity to be very low for them, making the
+    touchpad almost unusable. This change puts those devices into the correct
+    bucket again.
+    
+    Signed-off-by: Clinton Sprain <clintonsprain@gmail.com>
+    Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit 7bf27568417691e772e715f8fc6c30ea7ec892d6
+Author: Hans de Goede <hdegoede@redhat.com>
+Date:   Tue Apr 22 18:58:11 2014 +0200
+
+    Add support for INPUT_PROP_TOPBUTTONPAD
+    
+    Add a HasSecondaryButtons boolean config option which defaults to true for
+    devices with the INPUT_PROP_TOPBUTTONPAD and false for all other devices.
+    
+    Only parse the SecondarySoftButtonAreas when this option is true, effectively
+    disabling the top buttons when it is false. Likewise, only initialize the
+    SecondarySoftButtonAreas property if we enable support for it.
+    
+    This means that it is now safe to always set a SecondarySoftButtonAreas
+    default in 50-synaptics.conf, and that he section which was intended for
+    use with future pnp-id matching can be dropped, as that is now all handled
+    in the kernel.
+    
+    While at also remove the comment about disabling the bottom edge area, as that
+    is now done automatically.
+    
+    Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit 41afac2abf12dd74a171f726b57014f7fb266957
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Tue Apr 29 12:13:10 2014 +1000
+
+    man: add some missing quotes
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit a6f0f4c9a5bcb0e25343dd4c59d4cc47cc5e8006
+Author: Hans de Goede <hdegoede@redhat.com>
+Date:   Fri Apr 11 20:41:36 2014 +0200
+
+    Always count tripletap + click as 3 fingerclick on pads with < 3 touches
+    
+    When trying to do a 3 fingerclick on a touchpad which only tracks 2 touches,
+    this may register as a 3 or 2 fingerclick depending on the order in which
+    the touchpad detects the fingers. If the 2 outer fingers of the 3 get seen
+    first, then the 2 touches will be too far apart for the heuristic to see
+    them as being close together, and the click gets counted as a 2 finger click.
+    
+    A user will likely never do a 2 finger click with a 3th finger resting
+    somewhere else on the pad, where-as the above misdetection of the clicks is
+    a real issue, so simply always count a click with trippletap set as a
+    3 finger click on pads which track less then 3 touches.
+    
+    https://bugzilla.redhat.com/show_bug.cgi?id=1086218
+    
+    Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+    Reviewed-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit f183c1c38778b659b4c75a0e2c532dd5a9f8d437
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Wed Apr 9 10:41:29 2014 +1000
+
+    conf: add more PnPIDs and DMI matches for Lenovos
+    
+    And expand DMI strings to more precise matches
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit 62ef210d11714703345dc8d35915ff53c37aee01
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Apr 7 16:16:13 2014 +1000
+
+    Comment the touch states
+    
+    Everytime I look at this I get confused about OPEN_EMPTY vs EMPTY. Let's fix
+    that.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit bfceb1bc580656aceb14e4b0f880bfcb3e4bc368
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Fri Apr 4 15:51:22 2014 +1000
+
+    eventcomm: Hook up the libevdev log handler
+    
+    This is a bit problematic: libevdev only has one global log handler.
+    So if we have another driver use libevdev, we'll either overwrite that handler
+    or get overwritten, whichever comes first. So we need to re-set the handler
+    every time we get an event to make sure we log through our handler.
+    Likewise, if we ever drop the device, we need to unset the log handler back to
+    NULL because we may unload the module and our handler may disappear.
+    
+    Use the lowest logging priority, let the server filter based on the verbosity
+    level instead.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit 6ad856790630393bbd41b0bd7746ed9b0629a7c6
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Thu Apr 3 16:41:15 2014 +1000
+
+    eventcomm: read one more event after finishing a sync
+    
+    Once the sync finishes, we get -EAGAIN. This only indicates the sync is done,
+    but some events may still be waiting in the pipe for us to read. We must read
+    those now, otherwise select may not trigger on further data.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit bec41416dbbee73eef9eee122d0acacc148e329d
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Thu Apr 3 15:42:45 2014 +1000
+
+    eventcomm: drop superflous helper function
+    
+    last_mt_vals_slot is only used in one location and there we can just use
+    cur_slot
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit f1948e08ee9894864254a18098e4f4fceb6e322f
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Wed Mar 19 15:08:15 2014 +1000
+
+    Disable GrabEventDevice by default
+    
+    This was required when we started supporting hotplugging to avoid duplicate
+    events. These days the drawback of not being able to record events in the case
+    of a bug is significant.
+    
+    Check the configuration source on init. If the device was hotplugged through a
+    a server config backend, disable the grab. If the device was statically
+    configured through an xorg.conf then leave the default grab enabled to avoid
+    a duplicate device.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit fd709900445e3cb9f31ce7e780bfa98ecb6dab9b
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Tue Mar 18 07:28:44 2014 +1000
+
+    synaptics 1.7.99.1
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit dc5474964d4ec73b5c324961026e1037bb344946
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Mar 17 14:55:37 2014 +1000
+
+    If the touchpad is in TOUCHPAD_OFF mode, allow physical clicks
+    
+    Enabling clicks in off mode also allows for the new Lenovo *40 series to use
+    the top software buttons while the touchpad is disabled. This benefits those
+    that usually disable touchpads altogether but still need the buttons for the
+    trackstick.
+    
+    This changes existing behaviour, but TouchpadOff was always intended to stop
+    erroneous events while typing. Physical button presses are hard to trigger
+    accidentally. On the touchpads that TouchpadOff concept was originally
+    designed for the buttons are nowhere near the keyboard and are physically
+    separated from the touchpad anyway. On Clickpads, triggering a physical
+    click requires more force than accidentally touching the surface.
+    
+    https://bugs.freedesktop.org/show_bug.cgi?id=76156
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit 4122db68f61c695eae3a65aec18db08b29898b6a
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Thu Mar 13 08:26:08 2014 +1000
+
+    conf: automatically enable the top softbutton area for the new Lenovos
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit 18dae625eada20c4486542f9bb037fa2782d75bd
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Sun Aug 5 14:32:08 2012 +1000
+
+    conf: apply ClickPad softbuttons option through fdi file too (fixed version)
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit f2cb48e6eee47fa621edaaf2f75b495b12f6eb55
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Thu Mar 13 10:14:40 2014 +1000
+
+    Revert "conf: apply ClickPad softbuttons option through fdi file too"
+    
+    Bad fdi file, type="string" is missing and it wouldn't merge properly.
+    
+    This reverts commit a35b2d629d85d7a8c82621a5098a17e5ffb341dc.
+
+commit a35b2d629d85d7a8c82621a5098a17e5ffb341dc
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Sun Aug 5 14:32:08 2012 +1000
+
+    conf: apply ClickPad softbuttons option through fdi file too
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit 17bbcad28000bbd896a33047c0720ada89e05f5d
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Wed Mar 12 14:11:29 2014 +1000
+
+    Revert "Add another third state to TouchpadOff for disabling all but button clicks"
+    
+    This third state is not needed, the behaviour of the touchpad driver is now
+    good enough to not need an external syndaemon instance to toggle this third
+    state.
+    
+    This reverts commit eea73358760c7ff9c9dac061f265753637c6f25c.
+    
+    Conflicts:
+    	man/synaptics.man
+    	src/synaptics.c
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit b40a5255fe73f7f95c8ff7145dd91605f3430119
+Author: Stephen Chandler Paul <thatslyude@gmail.com>
+Date:   Mon Mar 10 18:33:20 2014 -0400
+
+    Don't allow any type of movement starting in the top softbutton area
+    
+    Clicking in the top soft button area causes the trackpad to begin
+    registering motion, even if the finger never leaves the top soft button
+    area. We don't want this kind of behavior for the top soft button area,
+    since it makes clicking and dragging items much more difficult when
+    using a pointing stick.
+    
+    Signed-off-by: Stephen Chandler Paul <thatslyude@gmail.com>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit 9a419ba01c53a38b4b601f4415801fca29a2b4e2
+Author: Stephen Chandler Paul <thatslyude@gmail.com>
+Date:   Mon Mar 10 18:25:20 2014 -0400
+
+    Replace is_inside_anybutton_area with current_button_area
+    
+    Signed-off-by: Stephen Chandler Paul <thatslyude@gmail.com>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
+commit 2e5c0cf4395a0cf7b024495deab75f4ebe949e9a
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Mar 10 16:43:54 2014 +1000
+
+    eventcomm: drop mtdev
+    
+    All kernel touchpad devices now support slots, there isn't really a need to
+    support protocol A devices in synaptics. If such devices exist, we just treat
+    them as non-multitouch devices.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    Reviewed-by: Benjamin Tissoires <benjamin.tissoires@gmail.com>
+
+commit c90a76ab0e752be0be4d9d835289df05d783f979
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Mar 10 16:35:45 2014 +1000
+
+    eventcomm: drop some use of mtdev
+    
+    When checking the device don't open a new mtdev instance, use the existing
+    libevdev struct.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    Reviewed-by: Benjamin Tissoires <benjamin.tissoires@gmail.com>
+
+commit 5b7e1726369d4973859996f225bec743c2e21288
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Mar 10 16:42:34 2014 +1000
+
+    eventcomm: drop calculation of slot offset
+    
+    The kernel guarantees slots start at 0
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    Reviewed-by: Benjamin Tissoires <benjamin.tissoires@gmail.com>
+
+commit 040dfeba6886b8e910fb6b347c283e60fe24a147
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Tue Mar 11 14:50:01 2014 +1000
+
+    eventcomm: fix wrong event code for SYN_REPORT
+    
+    This was supposed to emulate a SYN_REPORT event so that the upper layers
+    process what's in the queue.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+    Reviewed-by: Benjamin Tissoires <benjamin.tissoires@gmail.com>
+
+commit 66240dc329683f0141c1e11590ea2c3d8ca25788
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Mon Mar 10 09:07:59 2014 +1000
+
+    Add property support for secondary (top) software buttons
+    
+    This was originally intended as a fixed xorg.conf option only (and still
+    largely is seen as such). Secondary software button are required only on a specific series
+    of touchpads and should be pre-configured by the system and/or the
+    distribution. As such, the property will not be initialized if it is not set
+    in the xorg.conf and will thus not respond to runtime changes.
+    
+    Exposing the property in this way gives clients a chance of detecting if a top
+    software button area is present and thus adjust their behaviour accordingly.
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+    Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+commit 80efc2f54f11a4d45411951f7055bfec2ed40fee
+Author: Hans de Goede <hdegoede@redhat.com>
+Date:   Sat Mar 8 10:41:14 2014 +0100
+
+    synaptics: Add support for server managed fds
+    
+    Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
 commit c431d900f54696f608312ea51b1fa671839f7d42
 Author: Peter Hutterer <peter.hutterer@who-t.net>
 Date:   Wed Feb 26 15:30:55 2014 +1000
