@@ -24,7 +24,6 @@ Vcs-Browser: http://git.debian.org/?p=pkg-xorg/driver/xserver-xorg-input-synapti
 Package: xserver-xorg-input-synaptics
 Architecture: any
 Depends:
- udev [linux-any],
  ${shlibs:Depends},
  ${xinpdriver:Depends},
  ${misc:Depends}

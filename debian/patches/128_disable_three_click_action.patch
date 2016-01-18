@@ -1,8 +1,11 @@
-Index: xserver-xorg-input-synaptics/src/synaptics.c
+Description: Disable three touch click in favor of uTouch gestures.
+Bug-Ubuntu: https://launchpad.net/bugs/961725
+
+Index: xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
 ===================================================================
---- xserver-xorg-input-synaptics.orig/src/synaptics.c	2012-02-13 20:30:53.165083092 -0800
-+++ xserver-xorg-input-synaptics/src/synaptics.c	2012-02-13 20:32:17.402508282 -0800
-@@ -497,7 +497,7 @@
+--- xserver-xorg-input-synaptics-1.8.2.orig/src/synaptics.c
++++ xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
+@@ -631,7 +631,7 @@ set_default_parameters(InputInfoPtr pInf
         otherwise clickFinger is always button 1. */
      clickFinger1 = 1;
      clickFinger2 = (priv->has_right || priv->has_middle) ? 1 : 3;

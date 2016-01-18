@@ -1,3 +1,40 @@
+xserver-xorg-input-synaptics (1.8.2-1ubuntu1) wily; urgency=medium
+
+  * Merge with Debian, remaining Ubuntu changes:
+  * debian/gbp.conf:
+    - Point at Ubuntu branch.
+  * debian/local/51-synaptics-quirks.conf:
+    - Add quirks for Dell Inspiron, HP Mininote.
+  * debian/local/66-xorg-synaptics.rules:
+    - Udev rules to tag Dell Inspiron, HP Mininote for quirks.
+  * debian/xserver-xorg-input-synaptics.install:
+    - Install quirks
+  * debian/patches/101_resolution_detect_option.patch:
+    - Provide an option to prevent synaptics from communicating the
+      touchpad size to the xserver.
+  * debian/patches/103_enable_cornertapping.patch:
+    - Enable right/middle clicks by tapping in the bottom- and top-right
+      corners.
+  * debian/patches/104_always_enable_tapping.patch:
+    - Enable tapping even when a physical left button is available.
+  * debian/patches/106_always_enable_vert_edge_scroll.patch:
+    - Enable vertical edge tapping by default even if we enable two-finger
+      scrolling as well.
+  * debian/patches/115_evdev_only.patch:
+    - Prevent non-evdev devices from firing the eventcomm AutoDevProbe callback.
+  * debian/patches/118_quell_error_msg.patch:
+    - Don't print error "Unable to find a synaptics device" when used on system
+      that doesn't have a touchpad anyway.
+  * debian/patches/124_syndaemon_events.patch:
+    - Drain spurious events from XRecord connection as a work around for a buggy
+      X server.
+  * debian/patches/128_disable_three_click_action.patch:
+    - Disable three touch click in favor of uTouch gestures.
+  * debian/patches/129_disable_three_touch_tap.patch:
+    - Disable three touch tap in favor of uTouch gestures.
+
+ -- Robert Ancell <robert.ancell@canonical.com>  Tue, 14 Jul 2015 16:30:22 +1200
+
 xserver-xorg-input-synaptics (1.8.2-1) unstable; urgency=medium
 
   * Let uscan verify tarball signatures.

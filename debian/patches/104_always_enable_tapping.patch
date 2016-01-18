@@ -1,10 +1,13 @@
-Index: xserver-xorg-input-synaptics/src/synaptics.c
+Description: Enable tapping even when a physical left button is available.
+Bug-Ubuntu: https://launchpad.net/bugs/320585
+
+Index: xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
 ===================================================================
---- xserver-xorg-input-synaptics.orig/src/synaptics.c	2012-04-04 14:35:24.964138002 -0700
-+++ xserver-xorg-input-synaptics/src/synaptics.c	2012-04-04 14:35:41.240138001 -0700
-@@ -656,10 +656,10 @@ static void set_default_parameters(Input
-     palmMinWidth = priv->minw + range * (10.0/16);
-     emulateTwoFingerMinW = priv->minw + range * (7.0/16);
+--- xserver-xorg-input-synaptics-1.8.2.orig/src/synaptics.c
++++ xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
+@@ -622,10 +622,10 @@ set_default_parameters(InputInfoPtr pInf
+     palmMinWidth = priv->minw + range * (10.0 / 16);
+     emulateTwoFingerMinW = priv->minw + range * (7.0 / 16);
  
 -    /* Enable tap if we don't have a phys left button */
 -    tapButton1 = priv->has_left ? 0 : 1;

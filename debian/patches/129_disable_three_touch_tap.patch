@@ -1,6 +1,11 @@
---- a/src/synaptics.c
-+++ b/src/synaptics.c
-@@ -633,7 +633,7 @@ static void set_default_parameters(Input
+Description: Disable three touch tap in favor of uTouch gestures.
+Bug-Ubuntu: https://launchpad.net/bugs/961725
+
+Index: xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
+===================================================================
+--- xserver-xorg-input-synaptics-1.8.2.orig/src/synaptics.c
++++ xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
+@@ -625,7 +625,7 @@ set_default_parameters(InputInfoPtr pInf
      /* Enable tap */
      tapButton1 = 1;
      tapButton2 = 3;

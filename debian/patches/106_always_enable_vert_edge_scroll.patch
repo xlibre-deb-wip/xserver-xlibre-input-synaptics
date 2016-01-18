@@ -1,8 +1,11 @@
-Index: xserver-xorg-input-synaptics/src/synaptics.c
+Description: Enable vertical edge tapping by default even if we enable two-finger scrolling as well.
+Bug-Ubuntu: https://launchpad.net/bugs/320632
+
+Index: xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
 ===================================================================
---- xserver-xorg-input-synaptics.orig/src/synaptics.c	2011-07-05 11:54:48.311347674 +0300
-+++ xserver-xorg-input-synaptics/src/synaptics.c	2011-07-05 11:54:51.321347674 +0300
-@@ -499,8 +499,8 @@
+--- xserver-xorg-input-synaptics-1.8.2.orig/src/synaptics.c
++++ xserver-xorg-input-synaptics-1.8.2/src/synaptics.c
+@@ -633,8 +633,8 @@ set_default_parameters(InputInfoPtr pInf
      clickFinger2 = (priv->has_right || priv->has_middle) ? 1 : 3;
      clickFinger3 = (priv->has_right || priv->has_middle) ? 1 : 2;
  

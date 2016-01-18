@@ -1,6 +1,11 @@
---- a/tools/synclient.c
-+++ b/tools/synclient.c
-@@ -406,9 +406,7 @@
+Description: Don't print error "Unable to find a synaptics device" when used on system that doesn't have a touchpad anyway.
+Bug-Ubuntu: https://launchpad.net/bugs/716712
+
+Index: xserver-xorg-input-synaptics-1.8.2/tools/synclient.c
+===================================================================
+--- xserver-xorg-input-synaptics-1.8.2.orig/tools/synclient.c
++++ xserver-xorg-input-synaptics-1.8.2/tools/synclient.c
+@@ -299,9 +299,7 @@ dp_get_device(Display * dpy)
   unwind:
      XFree(properties);
      XFreeDeviceList(info);
@@ -11,9 +16,11 @@
          XCloseDevice(dpy, dev);
          dev = NULL;
      }
---- a/tools/syndaemon.c
-+++ b/tools/syndaemon.c
-@@ -529,9 +529,7 @@
+Index: xserver-xorg-input-synaptics-1.8.2/tools/syndaemon.c
+===================================================================
+--- xserver-xorg-input-synaptics-1.8.2.orig/tools/syndaemon.c
++++ xserver-xorg-input-synaptics-1.8.2/tools/syndaemon.c
+@@ -529,9 +529,7 @@ dp_get_device(Display * dpy)
   unwind:
      XFree(properties);
      XFreeDeviceList(info);
