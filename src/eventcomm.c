@@ -93,18 +93,15 @@ struct eventcomm_proto_data {
     int have_monotonic_clock;
 };
 
-#ifdef HAVE_LIBEVDEV_DEVICE_LOG_FUNCS
 static void
-libevdev_log_func(const struct libevdev *dev,
-                  enum libevdev_log_priority priority,
+libevdev_log_func(enum libevdev_log_priority priority,
                   void *data,
                   const char *file, int line, const char *func,
                   const char *format, va_list args)
-_X_ATTRIBUTE_PRINTF(7, 0);
+_X_ATTRIBUTE_PRINTF(6, 0);
 
 static void
-libevdev_log_func(const struct libevdev *dev,
-                  enum libevdev_log_priority priority,
+libevdev_log_func(enum libevdev_log_priority priority,
                   void *data,
                   const char *file, int line, const char *func,
                   const char *format, va_list args)
@@ -114,15 +111,19 @@ libevdev_log_func(const struct libevdev *dev,
     switch(priority) {
         case LIBEVDEV_LOG_ERROR: verbosity = 0; break;
         case LIBEVDEV_LOG_INFO: verbosity = 4; break;
-        case LIBEVDEV_LOG_DEBUG:
-        default:
-            verbosity = 10;
-            break;
+        case LIBEVDEV_LOG_DEBUG: verbosity = 10; break;
     }
 
     LogVMessageVerbSigSafe(X_NOTICE, verbosity, format, args);
 }
-#endif
+
+static void
+set_libevdev_log_handler(void)
+{
+                              /* be quiet, gcc *handwave* */
+    libevdev_set_log_function((libevdev_log_func_t)libevdev_log_func, NULL);
+    libevdev_set_log_priority(LIBEVDEV_LOG_DEBUG);
+}
 
 struct eventcomm_proto_data *
 EventProtoDataAlloc(int fd)
@@ -130,6 +131,7 @@ EventProtoDataAlloc(int fd)
     struct eventcomm_proto_data *proto_data;
     int rc;
 
+    set_libevdev_log_handler();
 
     proto_data = calloc(1, sizeof(struct eventcomm_proto_data));
     if (!proto_data)
@@ -138,31 +140,12 @@ EventProtoDataAlloc(int fd)
     proto_data->st_to_mt_scale[0] = 1;
     proto_data->st_to_mt_scale[1] = 1;
 
-    proto_data->evdev = libevdev_new();
-    if (!proto_data->evdev) {
-        rc = -1;
-        goto out;
-    }
-
-#ifdef HAVE_LIBEVDEV_DEVICE_LOG_FUNCS
-    libevdev_set_device_log_function(proto_data->evdev, libevdev_log_func,
-                                     LIBEVDEV_LOG_DEBUG, NULL);
-#endif
-
-    rc = libevdev_set_fd(proto_data->evdev, fd);
+    rc = libevdev_new_from_fd(fd, &proto_data->evdev);
     if (rc < 0) {
-        goto out;
-    }
-
-    proto_data->read_flag = LIBEVDEV_READ_FLAG_NORMAL;
-
-out:
-    if (rc < 0) {
-        if (proto_data && proto_data->evdev)
-            libevdev_free(proto_data->evdev);
         free(proto_data);
         proto_data = NULL;
-    }
+    } else
+        proto_data->read_flag = LIBEVDEV_READ_FLAG_NORMAL;
 
     return proto_data;
 }
@@ -239,6 +222,8 @@ EventDeviceOnHook(InputInfoPtr pInfo, SynapticsParameters * para)
         (struct eventcomm_proto_data *) priv->proto_data;
     int ret;
 
+    set_libevdev_log_handler();
+
     if (libevdev_get_fd(proto_data->evdev) != -1) {
         struct input_event ev;
 
@@ -299,33 +284,58 @@ EventDeviceOffHook(InputInfoPtr pInfo)
  * - BTN_TOOL_PEN is _not_ set
  *
  * @param evdev Libevdev handle
+ * @param test_grab If true, test whether an EVIOCGRAB is possible on the
+ * device. A failure to grab the event device returns in a failure.
  *
  * @return TRUE if the device is a touchpad or FALSE otherwise.
  */
 static Bool
-event_query_is_touchpad(struct libevdev *evdev)
+event_query_is_touchpad(struct libevdev *evdev, BOOL test_grab)
 {
+    int ret = FALSE, rc;
+
+    if (test_grab) {
+        rc = libevdev_grab(evdev, LIBEVDEV_GRAB);
+        if (rc < 0)
+            return FALSE;
+    }
+
     /* Check for ABS_X, ABS_Y, ABS_PRESSURE and BTN_TOOL_FINGER */
     if (!libevdev_has_event_type(evdev, EV_SYN) ||
         !libevdev_has_event_type(evdev, EV_ABS) ||
         !libevdev_has_event_type(evdev, EV_KEY))
-        return FALSE;
+        goto unwind;
 
     if (!libevdev_has_event_code(evdev, EV_ABS, ABS_X) ||
         !libevdev_has_event_code(evdev, EV_ABS, ABS_Y))
-        return FALSE;
+        goto unwind;
 
     /* we expect touchpad either report raw pressure or touches */
     if (!libevdev_has_event_code(evdev, EV_KEY, BTN_TOUCH) &&
         !libevdev_has_event_code(evdev, EV_ABS, ABS_PRESSURE))
-        return FALSE;
+        goto unwind;
 
     /* all Synaptics-like touchpad report BTN_TOOL_FINGER */
     if (!libevdev_has_event_code(evdev, EV_KEY, BTN_TOOL_FINGER) ||
         libevdev_has_event_code(evdev, EV_ABS, BTN_TOOL_PEN)) /* Don't match wacom tablets */
-        return FALSE;
+        goto unwind;
 
-    return TRUE;
+    if (libevdev_has_event_code(evdev, EV_ABS, ABS_MT_SLOT)) {
+        if (libevdev_get_num_slots(evdev) == -1)
+            goto unwind; /* Ignore fake MT devices */
+
+        if (!libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_X) ||
+            !libevdev_has_event_code(evdev, EV_ABS, ABS_MT_POSITION_Y))
+            goto unwind;
+    }
+
+    ret = TRUE;
+
+ unwind:
+    if (test_grab)
+        libevdev_grab(evdev, LIBEVDEV_UNGRAB);
+
+    return (ret == TRUE);
 }
 
 #define PRODUCT_ANY 0x0000
@@ -436,6 +446,11 @@ event_query_axis_ranges(InputInfoPtr pInfo)
     event_get_abs(proto_data->evdev, ABS_Y, &priv->miny, &priv->maxy,
                   &priv->synpara.hyst_y, &priv->resy);
 
+    if (priv->minx == priv->maxx || priv->miny == priv->maxy) {
+        xf86IDrvMsg(pInfo, X_ERROR, "Kernel bug: min == max on ABS_X/Y\n");
+        return;
+    }
+
     priv->has_pressure = libevdev_has_event_code(proto_data->evdev, EV_ABS, ABS_PRESSURE);
     priv->has_width = libevdev_has_event_code(proto_data->evdev, EV_ABS, ABS_TOOL_WIDTH);
 
@@ -457,6 +472,11 @@ event_query_axis_ranges(InputInfoPtr pInfo)
                       &priv->maxx, &priv->synpara.hyst_x, &priv->resx);
         event_get_abs(proto_data->evdev, ABS_MT_POSITION_Y, &priv->miny,
                       &priv->maxy, &priv->synpara.hyst_y, &priv->resy);
+
+        if (priv->minx == priv->maxx || priv->miny == priv->maxy) {
+            xf86IDrvMsg(pInfo, X_ERROR, "Kernel bug: min == max on ABS_MT_POSITION_X/Y\n");
+            return;
+        }
 
         proto_data->st_to_mt_offset[0] = priv->minx - st_minx;
         proto_data->st_to_mt_scale[0] =
@@ -517,7 +537,8 @@ EventQueryHardware(InputInfoPtr pInfo)
     SynapticsPrivate *priv = (SynapticsPrivate *) pInfo->private;
     struct eventcomm_proto_data *proto_data = priv->proto_data;
 
-    if (!event_query_is_touchpad(proto_data->evdev))
+    if (!event_query_is_touchpad(proto_data->evdev,
+                                 (proto_data) ? proto_data->need_grab : TRUE))
         return FALSE;
 
     xf86IDrvMsg(pInfo, X_PROBED, "touchpad found\n");
@@ -606,14 +627,6 @@ EventProcessTouchEvent(InputInfoPtr pInfo, struct SynapticsHwState *hw,
                 hw->slot_state[slot_index] = SLOTSTATE_CLOSE;
                 proto_data->num_touches--;
             }
-
-            /* When there are no fingers on the touchpad, set width and
-             * pressure to zero as ABS_MT_TOUCH_MAJOR and ABS_MT_PRESSURE
-             * are not zero when fingers are released. */
-            if (proto_data->num_touches == 0) {
-                hw->fingerWidth = 0;
-                hw->z = 0;
-            }
         }
         else {
             ValuatorMask *mask = proto_data->last_mt_vals[slot_index];
@@ -626,10 +639,6 @@ EventProcessTouchEvent(InputInfoPtr pInfo, struct SynapticsHwState *hw,
                     hw->cumulative_dx += ev->value - last_val;
                 else if (ev->code == ABS_MT_POSITION_Y)
                     hw->cumulative_dy += ev->value - last_val;
-                else if (ev->code == ABS_MT_TOUCH_MAJOR)
-                    hw->fingerWidth = ev->value;
-                else if (ev->code == ABS_MT_PRESSURE)
-                    hw->z = ev->value;
             }
 
             valuator_mask_set(mask, map, ev->value);
@@ -684,13 +693,13 @@ EventReadHwState(InputInfoPtr pInfo,
     struct eventcomm_proto_data *proto_data = priv->proto_data;
     Bool sync_cumulative = FALSE;
 
+    set_libevdev_log_handler();
+
     SynapticsResetTouchHwState(hw, FALSE);
 
-    /* Reset cumulative values if buttons were not previously pressed and no
-     * two-finger scrolling is ongoing, or no finger was previously present. */
-    if (((!hw->left && !hw->right && !hw->middle) &&
-        !(priv->vert_scroll_twofinger_on || priv->vert_scroll_twofinger_on)) ||
-        hw->z < para->finger_low) {
+    /* Reset cumulative values if buttons were not previously pressed,
+     * or no finger was previously present. */
+    if ((!hw->left && !hw->right && !hw->middle) || hw->z < para->finger_low) {
         hw->cumulative_dx = hw->x;
         hw->cumulative_dy = hw->y;
         sync_cumulative = TRUE;
@@ -940,7 +949,7 @@ EventReadDevDimensions(InputInfoPtr pInfo)
         proto_data->axis_map[i] = -1;
     proto_data->cur_slot = -1;
 
-    if (event_query_is_touchpad(proto_data->evdev)) {
+    if (event_query_is_touchpad(proto_data->evdev, proto_data->need_grab)) {
         event_query_touch(pInfo);
         event_query_axis_ranges(pInfo);
     }
@@ -974,7 +983,7 @@ EventAutoDevProbe(InputInfoPtr pInfo, const char *device)
 
             rc = libevdev_new_from_fd(fd, &evdev);
             if (rc >= 0) {
-                touchpad_found = event_query_is_touchpad(evdev);
+                touchpad_found = event_query_is_touchpad(evdev, TRUE);
                 libevdev_free(evdev);
             }
 
@@ -1016,7 +1025,7 @@ EventAutoDevProbe(InputInfoPtr pInfo, const char *device)
 
             rc = libevdev_new_from_fd(fd, &evdev);
             if (rc >= 0) {
-                touchpad_found = event_query_is_touchpad(evdev);
+                touchpad_found = event_query_is_touchpad(evdev, TRUE);
                 libevdev_free(evdev);
                 if (touchpad_found) {
                     xf86IDrvMsg(pInfo, X_PROBED, "auto-dev sets device to %s\n",

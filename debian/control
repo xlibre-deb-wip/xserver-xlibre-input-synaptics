@@ -5,7 +5,7 @@ Maintainer: Ubuntu X-SWAT <ubuntu-x@lists.ubuntu.com>
 XSBC-Original-Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
 Uploaders: Mattia Dongili <malattia@debian.org>, maximilian attems <maks@debian.org>
 Build-Depends:
- debhelper (>= 8),
+ debhelper (>= 9),
  dh-autoreconf,
  libx11-dev,
  libxext-dev,

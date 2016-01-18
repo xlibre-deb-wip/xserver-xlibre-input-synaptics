@@ -129,7 +129,6 @@ InitTypedAtom(DeviceIntPtr dev, char *name, Atom type, int format, int nvalues,
         converted = val_16;
         break;
     case 32:
-    default:
         converted = val_32;
         break;
     }
