@@ -18,7 +18,7 @@ override_dh_shlibdeps:
 
 # Debug package:
 override_dh_strip:
-	dh_strip --dbg-package=xserver-xorg-input-synaptics-dbg
+	dh_strip --dbgsym-migration='xserver-xorg-input-synaptics-dbg (<< 1.8.3-2~)'
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
