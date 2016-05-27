@@ -1,3 +1,15 @@
+xserver-xorg-input-synaptics (1.8.2-1ubuntu3) xenial; urgency=medium
+
+  * Really rebuild against new xserver.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Thu, 03 Mar 2016 15:36:59 +0200
+
+xserver-xorg-input-synaptics (1.8.2-1ubuntu2) xenial; urgency=medium
+
+  * Rebuild against new xserver ABI.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Mon, 18 Jan 2016 16:00:22 +0200
+
 xserver-xorg-input-synaptics (1.8.2-1ubuntu1) wily; urgency=medium
 
   * Merge with Debian, remaining Ubuntu changes:
