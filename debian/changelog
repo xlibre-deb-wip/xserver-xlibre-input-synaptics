@@ -1,3 +1,9 @@
+xserver-xorg-input-synaptics (1.8.3-3) UNRELEASED; urgency=medium
+
+  * Use https URL in debian/watch.
+
+ -- Julien Cristau <jcristau@debian.org>  Sat, 24 Sep 2016 16:00:56 +0200
+
 xserver-xorg-input-synaptics (1.8.3-2) unstable; urgency=medium
 
   * Cherry-pick upstream commit 59e5db, which renames 50-synaptics.conf
