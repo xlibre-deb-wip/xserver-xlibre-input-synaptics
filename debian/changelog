@@ -2,6 +2,7 @@ xserver-xorg-input-synaptics (1.8.99.2-1) UNRELEASED; urgency=medium
 
   [ Andreas Boll ]
   * New upstream snapshot.
+  * Use https URL in debian/copyright.
 
   [ Julien Cristau ]
   * Use https URL in debian/watch.
