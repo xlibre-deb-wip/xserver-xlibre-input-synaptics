@@ -1,9 +1,13 @@
-xserver-xorg-input-synaptics (1.8.3-3) UNRELEASED; urgency=medium
+xserver-xorg-input-synaptics (1.8.99.2-1) UNRELEASED; urgency=medium
 
+  [ Andreas Boll ]
+  * New upstream snapshot.
+
+  [ Julien Cristau ]
   * Use https URL in debian/watch.
   * Use https for Vcs-* control fields.
 
- -- Julien Cristau <jcristau@debian.org>  Sat, 24 Sep 2016 16:00:56 +0200
+ -- Andreas Boll <andreas.boll.dev@gmail.com>  Thu, 13 Oct 2016 15:31:35 +0200
 
 xserver-xorg-input-synaptics (1.8.3-2) unstable; urgency=medium
 
