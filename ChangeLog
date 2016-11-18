@@ -1,3 +1,11 @@
+commit 3261e07c923c449f08a96a8439c97479b7ff899c
+Author: Peter Hutterer <peter.hutterer@who-t.net>
+Date:   Fri Nov 18 13:00:09 2016 +1000
+
+    synaptics 1.9.0
+    
+    Signed-off-by: Peter Hutterer <peter.hutterer@who-t.net>
+
 commit a7d76f4275a88d98b18eed29a1ee94a70e7fa367
 Author: Peter Hutterer <peter.hutterer@who-t.net>
 Date:   Sun Oct 9 19:27:47 2016 +1000

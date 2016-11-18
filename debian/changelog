@@ -1,7 +1,7 @@
-xserver-xorg-input-synaptics (1.8.99.2-1) UNRELEASED; urgency=medium
+xserver-xorg-input-synaptics (1.9.0-1) UNRELEASED; urgency=medium
 
   [ Andreas Boll ]
-  * New upstream snapshot.
+  * New upstream release.
   * Use https URL in debian/copyright.
   * Bump Standards-Version to 3.9.8, no changes needed.
 
