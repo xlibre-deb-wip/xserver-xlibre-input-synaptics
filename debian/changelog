@@ -1,4 +1,4 @@
-xserver-xorg-input-synaptics (1.9.0-1) UNRELEASED; urgency=medium
+xserver-xorg-input-synaptics (1.9.0-1) unstable; urgency=medium
 
   [ Andreas Boll ]
   * New upstream release.
@@ -9,7 +9,7 @@ xserver-xorg-input-synaptics (1.9.0-1) UNRELEASED; urgency=medium
   * Use https URL in debian/watch.
   * Use https for Vcs-* control fields.
 
- -- Andreas Boll <andreas.boll.dev@gmail.com>  Thu, 13 Oct 2016 15:31:35 +0200
+ -- Timo Aaltonen <tjaalton@debian.org>  Fri, 18 Nov 2016 13:10:43 +0200
 
 xserver-xorg-input-synaptics (1.8.3-2) unstable; urgency=medium
 
