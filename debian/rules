@@ -22,7 +22,6 @@ override_dh_strip:
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
-		--disable-silent-rules \
 		--libdir=\$${exec_prefix}/lib
 
 override_dh_auto_test:
