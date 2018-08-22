@@ -1,3 +1,9 @@
+xserver-xorg-input-synaptics (1.9.1-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Timo Aaltonen <tjaalton@debian.org>  Wed, 22 Aug 2018 18:36:11 +0300
+
 xserver-xorg-input-synaptics (1.9.0-1) unstable; urgency=medium
 
   [ Andreas Boll ]
