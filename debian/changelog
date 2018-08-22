@@ -3,6 +3,7 @@ xserver-xorg-input-synaptics (1.9.1-1) UNRELEASED; urgency=medium
   * New upstream release.
   * control: Update VCS urls.
   * Use debhelper 10.
+  * control: Bump policy to 4.1.5, no changes.
 
  -- Timo Aaltonen <tjaalton@debian.org>  Wed, 22 Aug 2018 18:36:11 +0300
 
