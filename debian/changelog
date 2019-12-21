@@ -7,6 +7,7 @@ xserver-xorg-input-synaptics (1.9.1-2) UNRELEASED; urgency=medium
   * Trim trailing whitespace.
   * Bump debhelper from old 10 to 12.
   * Set debhelper-compat version in Build-Depends.
+  * Fix day-of-week for changelog entry 0.13.3-1.
 
  -- Julien Cristau <jcristau@debian.org>  Wed, 16 Oct 2019 15:57:21 +0200
 
@@ -667,7 +668,7 @@ xfree86-driver-synaptics (0.13.3-1) unstable; urgency=low
   * New upstream.
   * Fixed synaptics_drv.o mode to 0644.
 
- -- Mattia Dongili (ma.d.) <dongili@supereva.it>  Thu, 20 Jun 2004 15:59:25 +0200
+ -- Mattia Dongili (ma.d.) <dongili@supereva.it>  Sun, 20 Jun 2004 15:59:25 +0200
 
 xfree86-driver-synaptics (0.13.2-1) unstable; urgency=low
 
