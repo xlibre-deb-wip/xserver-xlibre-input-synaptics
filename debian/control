@@ -4,7 +4,7 @@ Priority: optional
 Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
 Uploaders: Mattia Dongili <malattia@debian.org>, maximilian attems <maks@debian.org>
 Build-Depends:
- debhelper (>= 12~),
+ debhelper-compat (= 12),
  libx11-dev,
  libxext-dev,
  libxi-dev (>= 2:1.2.0),
