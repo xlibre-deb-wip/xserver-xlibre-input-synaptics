@@ -1,4 +1,4 @@
-xserver-xorg-input-synaptics (1.9.1-2) UNRELEASED; urgency=medium
+xserver-xorg-input-synaptics (1.9.1-2) unstable; urgency=medium
 
   [ Salman Mohammadi ]
   * d/control: add x11proto-dev as a (build-)dependency.
@@ -11,7 +11,7 @@ xserver-xorg-input-synaptics (1.9.1-2) UNRELEASED; urgency=medium
   * Update standards version to 4.5.0, no changes needed.
   * Drop transition for old debug package migration.
 
- -- Julien Cristau <jcristau@debian.org>  Wed, 16 Oct 2019 15:57:21 +0200
+ -- Timo Aaltonen <tjaalton@debian.org>  Mon, 06 Apr 2020 14:13:14 +0300
 
 xserver-xorg-input-synaptics (1.9.1-1) unstable; urgency=medium
 
