@@ -5,6 +5,7 @@ xserver-xorg-input-synaptics (1.9.2-1) UNRELEASED; urgency=medium
 
   [ Timo Aaltonen ]
   * New upstream release.
+  * signing-keys: Add new key from alanc.
 
  -- Debian Janitor <janitor@jelmer.uk>  Fri, 03 Sep 2021 04:10:43 -0000
 
