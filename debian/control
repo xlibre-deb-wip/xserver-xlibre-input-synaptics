@@ -7,13 +7,13 @@ Build-Depends:
  debhelper-compat (= 12),
  libx11-dev,
  libxext-dev,
- libxi-dev (>= 2:1.2.0),
+ libxi-dev,
  libevdev-dev [linux-any],
  x11proto-dev | x11proto-core-dev,
- xserver-xorg-dev (>= 2:1.12),
+ xserver-xorg-dev,
  pkg-config,
  quilt,
- xutils-dev (>= 1:7.5+4),
+ xutils-dev,
  libxtst-dev,
 Standards-Version: 4.5.0
 Vcs-Git: https://salsa.debian.org/xorg-team/driver/xserver-xorg-input-synaptics.git
@@ -29,8 +29,6 @@ Conflicts: xorg-driver-synaptics
 Replaces: xorg-driver-synaptics
 Provides: ${xinpdriver:Provides}, xorg-driver-synaptics
 Suggests: gpointing-device-settings, touchfreeze
-Breaks:
- kde-config-touchpad (<< 0.8.1-2~),
 Description: Synaptics TouchPad driver for X.Org server
  This package provides an input driver for the X.Org X server to enable
  advanced features of the Synaptics Touchpad including:
