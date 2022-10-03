@@ -1,14 +1,14 @@
-xserver-xorg-input-synaptics (1.9.2-1) UNRELEASED; urgency=medium
+xserver-xorg-input-synaptics (1.9.2-1) unstable; urgency=medium
 
   [ Debian Janitor ]
-  * Remove MIA uploaders
+  * Remove MIA uploaders (Closes: #933158)
 
   [ Timo Aaltonen ]
   * New upstream release.
   * signing-keys: Add new key from alanc.
   * docs: Updated.
 
- -- Debian Janitor <janitor@jelmer.uk>  Fri, 03 Sep 2021 04:10:43 -0000
+ -- Timo Aaltonen <tjaalton@debian.org>  Mon, 03 Oct 2022 11:52:38 +0300
 
 xserver-xorg-input-synaptics (1.9.1-2) unstable; urgency=medium
 
