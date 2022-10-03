@@ -145,7 +145,7 @@ Possible fixes:
 On some computers, it is possible to disable the touchpad either with
 a special key combination, from the BIOS, or with a special touchpad
 on/off button. On some machines, cycling the power doesn't
-automatically reenable the touchpad.
+automatically re-enable the touchpad.
 
 If the touchpad appears to be dead, try to enable it from the BIOS or
 using a key combination. One user also reported that he had to remove
