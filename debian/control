@@ -61,6 +61,7 @@ Architecture: all
 Depends:
  x11proto-dev | x11proto-core-dev,
  ${misc:Depends},
+Multi-Arch: foreign
 Description: Synaptics TouchPad driver for X.Org server (development headers)
  This package contains the development headers for the Synaptics input
  driver found in xserver-xorg-input-synaptics. Non-developers likely have
