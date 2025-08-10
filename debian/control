@@ -1,8 +1,7 @@
-Source: xserver-xorg-input-synaptics
+Source: xserver-xlibre-input-synaptics
 Section: x11
 Priority: optional
-Maintainer: Debian X Strike Force <debian-x@lists.debian.org>
-Uploaders: maximilian attems <maks@debian.org>
+Maintainer: apebl <a@pebl.cc>
 Build-Depends:
  debhelper-compat (= 12),
  libx11-dev,
@@ -10,24 +9,29 @@ Build-Depends:
  libxi-dev,
  libevdev-dev [linux-any],
  x11proto-dev | x11proto-core-dev,
- xserver-xorg-dev,
+ xserver-xlibre-dev,
  pkg-config,
  quilt,
  xutils-dev,
  libxtst-dev,
 Standards-Version: 4.5.0
-Vcs-Git: https://salsa.debian.org/xorg-team/driver/xserver-xorg-input-synaptics.git
-Vcs-Browser: https://salsa.debian.org/xorg-team/driver/xserver-xorg-input-synaptics
+Vcs-Git: https://github.com/xlibre-deb/xserver-xlibre-input-synaptics.git
+Vcs-Browser: https://github.com/xlibre-deb/xserver-xlibre-input-synaptics
+Homepage: https://github.com/X11Libre
 
-Package: xserver-xorg-input-synaptics
+Package: xserver-xlibre-input-synaptics
 Architecture: any
 Depends:
  ${shlibs:Depends},
  ${xinpdriver:Depends},
  ${misc:Depends}
-Conflicts: xorg-driver-synaptics
+Conflicts:
+ xserver-xorg-input-synaptics,
+ xlibre-driver-synaptics
 Replaces: xorg-driver-synaptics
-Provides: ${xinpdriver:Provides}, xorg-driver-synaptics
+Provides:
+ xserver-xorg-input-synaptics,
+ ${xinpdriver:Provides}, xlibre-driver-synaptics
 Suggests: gpointing-device-settings, touchfreeze
 Description: Synaptics TouchPad driver for X.Org server
  This package provides an input driver for the X.Org X server to enable
@@ -55,7 +59,7 @@ Description: Synaptics TouchPad driver for X.Org server
     and thus avoid unwanted mouse movements (see syndaemon(1)).
  .
 
-Package: xserver-xorg-input-synaptics-dev
+Package: xserver-xlibre-input-synaptics-dev
 Section: libdevel
 Architecture: all
 Depends:
@@ -66,3 +70,7 @@ Description: Synaptics TouchPad driver for X.Org server (development headers)
  This package contains the development headers for the Synaptics input
  driver found in xserver-xorg-input-synaptics. Non-developers likely have
  little use for this package.
+Provides:
+ xserver-xorg-input-synaptics-dev,
+Conflicts:
+ xserver-xorg-input-synaptics-dev,
