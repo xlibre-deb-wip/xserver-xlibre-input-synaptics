@@ -33,8 +33,8 @@ Provides:
  xserver-xorg-input-synaptics,
  ${xinpdriver:Provides}, xlibre-driver-synaptics
 Suggests: gpointing-device-settings, touchfreeze
-Description: Synaptics TouchPad driver for X.Org server
- This package provides an input driver for the X.Org X server to enable
+Description: Synaptics TouchPad driver for XLibre server
+ This package provides an input driver for the XLibre X server to enable
  advanced features of the Synaptics Touchpad including:
  .
   * Movement with adjustable, non-linear acceleration and speed
@@ -66,9 +66,9 @@ Depends:
  x11proto-dev | x11proto-core-dev,
  ${misc:Depends},
 Multi-Arch: foreign
-Description: Synaptics TouchPad driver for X.Org server (development headers)
+Description: Synaptics TouchPad driver for XLibre server (development headers)
  This package contains the development headers for the Synaptics input
- driver found in xserver-xorg-input-synaptics. Non-developers likely have
+ driver found in xserver-xlibre-input-synaptics. Non-developers likely have
  little use for this package.
 Provides:
  xserver-xorg-input-synaptics-dev,
