@@ -30,7 +30,7 @@ Conflicts:
  xlibre-driver-synaptics
 Replaces: xorg-driver-synaptics
 Provides:
- xserver-xorg-input-synaptics,
+ xserver-xorg-input-synaptics (= ${binary:Version}),
  ${xinpdriver:Provides}, xlibre-driver-synaptics
 Suggests: gpointing-device-settings, touchfreeze
 Description: Synaptics TouchPad driver for XLibre server
@@ -71,6 +71,6 @@ Description: Synaptics TouchPad driver for XLibre server (development headers)
  driver found in xserver-xlibre-input-synaptics. Non-developers likely have
  little use for this package.
 Provides:
- xserver-xorg-input-synaptics-dev,
+ xserver-xorg-input-synaptics-dev (= ${binary:Version}),
 Conflicts:
  xserver-xorg-input-synaptics-dev,
